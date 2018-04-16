@@ -1,9 +1,24 @@
 const express = require ('express')
 const bodyParser = require ('body-parser')
 const port = '8000'
-const router = express.Router()
-
+const cors = require ('cors')
+const routes = express.Router()
 const app = express()
+
+app.use(cors())
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+app.use(routes)
+
+app.listen(port)
+
+app.get('/', function(req, res){
+    res.json({
+            message: 'Horray! Welcome to Leal\'s API!'    
+        })
+})
 
 
 function palindrome(str) {
@@ -16,25 +31,25 @@ function palindrome(str) {
     const reverseStr = lowRegStr.split('').reverse().join(''); 
 
     return reverseStr === lowRegStr; 
-  }
+}
 
-app.listen(port)
-
-app.get('/', function(req, res){
-    res.json({
-            message: 'Horray! Welcome to Leal\'s API!'    
+routes.post('/palindrome', function (req, res, next){
+    console.log (req.body)
+    let isItPalidrome
+    if ( req.body.phrase ){
+        isItPalidrome = palindrome(req.body.phrase)
+    }
+    console.log ( isItPalidrome )
+    if ( isItPalidrome === true){
+        res.json({
+            result: 200 
         })
-        console.log ( 'chegou requisição aqui')
-})
-
-router.post('/palindrome', function (req, res, next){
-    let phrase = req.body.in 
-    let isItPalindrome = palindrome(phrase)
-    res.json({
-        palindrome: isItPalindrome,
-        result: 200 
-    })
-    console.log ( phrase)
+    }
+    if ( isItPalidrome === false){
+        res.json({
+            result: 400
+        })
+    }
 })
 
 console.log( `Server started on port ${port} at ${new Date()}`)
